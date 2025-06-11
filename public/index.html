@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alladin's Chirag | Kalagi Group of Companies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --text: #f1f1f1;
+            --success: #4ade80;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --card-bg: rgba(26, 26, 46, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text);
+            min-height: 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .login-logo {
+            margin-bottom: 30px;
+        }
+        
+        .login-logo .logo-icon {
+            background: var(--highlight);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 0 25px var(--highlight);
+            margin: 0 auto 20px;
+        }
+        
+        .login-logo .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 36px;
+            background: linear-gradient(to right, #e94560, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .login-logo .company {
+            font-size: 16px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.7;
+        }
+        
+        .login-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 15px 15px 45px;
+            color: var(--text);
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .login-input:focus {
+            outline: none;
+            border-color: var(--highlight);
+        }
+        
+        .login-btn {
+            background: var(--highlight);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #d13a53;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+        
+        .login-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .login-links a {
+            color: var(--highlight);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .login-links a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Dashboard */
+        .dashboard-section {
+            display: none;
+        }
+        
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(229, 229, 229, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            background: var(--highlight);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 15px var(--highlight);
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            background: linear-gradient(to right, #e94560, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .company {
+            font-size: 14px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .user-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            width: 200px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 100;
+        }
+        
+        .user-dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        /* Main Panel */
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Market Overview */
+        .market-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .market-card {
+            background: rgba(15, 52, 96, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .market-card:hover {
+            transform: translateY(-5px);
+            background: rgba(15, 52, 96, 0.7);
+        }
+        
+        .market-card h3 {
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .market-card .value {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .market-card .change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .positive {
+            color: var(--success);
+        }
+        
+        .negative {
+            color: var(--danger);
+        }
+        
+        /* Volatile Stocks */
+        .stocks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .stock-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .stock-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stock-symbol {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .stock-price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .stock-change {
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        /* Trading Panel */
+        .trading-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .budget-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        input, select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--highlight);
+        }
+        
+        .btn {
+            background: var(--highlight);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #d13a53;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--highlight);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+        
+        /* Algorithm Status */
+        .algo-status {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .status-card {
+            background: rgba(15, 52, 96, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .indicator.active {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+        
+        .indicator.inactive {
+            background: var(--danger);
+        }
+        
+        .status-content {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .activity-log {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .log-entry {
+            font-size: 13px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        
+        .log-time {
+            opacity: 0.7;
+            min-width: 70px;
+        }
+        
+        .log-message {
+            flex: 1;
+        }
+        
+        /* Portfolio */
+        .portfolio-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(15, 52, 96, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 22px;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .market-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .portfolio-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .market-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .login-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <div class="logo-text">Alladin's Chirag</div>
+                <div class="company">Kalagi Group of Companies</div>
+            </div>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" class="login-input" id="username" placeholder="Username" autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" class="login-input" id="password" placeholder="Password">
+                </div>
+                
+                <button class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                </button>
+                
+                <div class="login-links">
+                    <a href="#"><i class="fas fa-key"></i> Forgot Password?</a>
+                    <a href="#"><i class="fas fa-user-plus"></i> Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard-section" id="dashboard">
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div>
+                        <div class="logo-text">Alladin's Chirag</div>
+                        <div class="company">Kalagi Group of Companies</div>
+                    </div>
+                </div>
+                
+                <div class="datetime">
+                    <div id="current-date"></div>
+                    <div id="current-time" class="pulse"></div>
+                </div>
+                
+                <div class="user-menu">
+                    <div class="user-avatar" id="user-avatar">OK</div>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <div class="dropdown-item">
+                            <i class="fas fa-user-circle"></i> Profile
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard">
+                <div class="main-panel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-line"></i> Market Overview</h2>
+                            <div class="market-indices">
+                                NIFTY 50: <span id="nifty-index">18,432.45</span> 
+                                <span class="positive" id="nifty-change">+0.85%</span> | 
+                                SENSEX: <span id="sensex-index">62,187.34</span> 
+                                <span class="positive" id="sensex-change">+0.92%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="market-overview" id="market-overview">
+                            <!-- Market cards will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-bolt"></i> Most Volatile Stocks</h2>
+                            <div class="update-info">
+                                <i class="fas fa-sync-alt"></i> Real-time Data
+                            </div>
+                        </div>
+                        
+                        <div class="stocks-list" id="stocks-list">
+                            <!-- Stock items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-area"></i> Portfolio Performance</h2>
+                            <div class="time-filter">
+                                <select id="time-filter">
+                                    <option>1D</option>
+                                    <option>1W</option>
+                                    <option selected>1M</option>
+                                    <option>3M</option>
+                                    <option>1Y</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="portfolioChart"></canvas>
+                        </div>
+                        
+                        <div class="portfolio-stats">
+                            <div class="stat-card">
+                                <h3>Total Value</h3>
+                                <div class="value" id="total-value">₹1,254,870</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Today's Gain</h3>
+                                <div class="value positive" id="daily-gain">+₹24,650</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Overall Return</h3>
+                                <div class="value positive" id="overall-return">+18.45%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trading-panel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-wallet"></i> Investment Budget</h2>
+                        </div>
+                        
+                        <div class="budget-form">
+                            <div class="form-group">
+                                <label for="budget">Enter Your Investment Budget (₹)</label>
+                                <input type="number" id="budget" placeholder="e.g. 500000" value="500000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="risk">Select Risk Profile</label>
+                                <select id="risk">
+                                    <option value="low">Low Risk</option>
+                                    <option value="moderate" selected>Moderate Risk</option>
+                                    <option value="high">High Risk</option>
+                                    <option value="aggressive">Aggressive</option>
+                                </select>
+                            </div>
+                            
+                            <button class="btn" id="start-trading">
+                                <i class="fas fa-play"></i> Start Algorithmic Trading
+                            </button>
+                            
+                            <button class="btn btn-outline">
+                                <i class="fas fa-cog"></i> Configure Algorithm
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-robot"></i> Algorithm Status</h2>
+                        </div>
+                        
+                        <div class="algo-status">
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h3>Trading Status</h3>
+                                    <div class="status-indicator">
+                                        <span class="indicator active" id="algo-status-indicator"></span>
+                                        <span id="algo-status-text">Active</span>
+                                    </div>
+                                </div>
+                                <div class="status-content">
+                                    Algorithm is actively monitoring <span id="monitoring-count">42</span> stocks and executing trades based on volatility patterns.
+                                </div>
+                            </div>
+                            
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h3>Today's Activity</h3>
+                                </div>
+                                <div class="activity-log" id="activity-log">
+                                    <!-- Activity logs will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-lightbulb"></i> Trading Insights</h2>
+                        </div>
+                        
+                        <div class="insights">
+                            <div class="status-content" id="trading-insights">
+                                <!-- Insights will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Alladin's Chirag - An Intelligent Trading System by Omkar Kalagi</p>
+                <p>© 2023 Kalagi Group of Companies. All rights reserved. NSE Data provided in real-time.</p>
+                <p>Disclaimer: Trading involves risk. Past performance is not indicative of future results.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userAvatar = document.getElementById('user-avatar');
+        const userDropdown = document.getElementById('user-dropdown');
+        const startTradingBtn = document.getElementById('start-trading');
+        
+        // Login functionality
+        loginBtn.addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username && password) {
+                // In a real app, you would send this to your backend for authentication
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                initDashboard();
+            } else {
+                alert('Please enter both username and password');
+            }
+        });
+        
+        // Logout functionality
+        logoutBtn.addEventListener('click', function() {
+            dashboard.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+        
+        // User dropdown toggle
+        userAvatar.addEventListener('click', function() {
+            userDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!userAvatar.contains(event.target) {
+                userDropdown.classList.remove('show');
+            }
+        });
+        
+        // Initialize dashboard
+        function initDashboard() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            initCharts();
+            initMarketData();
+            initActivityLog();
+            initTradingInsights();
+            
+            // Initialize WebSocket connection
+            initWebSocket();
+        }
+        
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            const timeStr = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('current-time').textContent = timeStr;
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            const ctx = document.getElementById('portfolioChart').getContext('2d');
+            const portfolioChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '5', '10', '15', '20', '25', '30'],
+                    datasets: [{
+                        label: 'Portfolio Value (₹)',
+                        data: [1150000, 1180000, 1225000, 1198000, 1234000, 1250000, 1254870],
+                        borderColor: '#e94560',
+                        backgroundColor: 'rgba(233, 69, 96, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                callback: function(value) {
+                                    return '₹' + (value/1000) + 'K';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    }
+                }
+            });
+        }
+        
+        // Initialize market data
+        function initMarketData() {
+            const marketOverview = document.getElementById('market-overview');
+            const stocksList = document.getElementById('stocks-list');
+            
+            // Market indices data
+            const marketIndices = [
+                { name: 'NIFTY BANK', value: 42187.95, change: 1.25 },
+                { name: 'NIFTY IT', value: 34892.10, change: -0.35 },
+                { name: 'NIFTY AUTO', value: 12876.45, change: 0.92 },
+                { name: 'NIFTY PHARMA', value: 14321.60, change: 0.45 }
+            ];
+            
+            // Stocks data
+            const volatileStocks = [
+                { name: 'Reliance Industries', symbol: 'RELIANCE', price: 2542.75, change: 3.45 },
+                { name: 'Tata Consultancy', symbol: 'TCS', price: 3412.50, change: -2.15 },
+                { name: 'HDFC Bank', symbol: 'HDFCBANK', price: 1642.30, change: 1.87 },
+                { name: 'Infosys', symbol: 'INFY', price: 1487.25, change: -1.25 },
+                { name: 'ICICI Bank', symbol: 'ICICIBANK', price: 912.45, change: 2.65 }
+            ];
+            
+            // Populate market overview
+            marketOverview.innerHTML = '';
+            marketIndices.forEach(index => {
+                const isPositive = index.change >= 0;
+                const marketCard = document.createElement('div');
+                marketCard.className = 'market-card';
+                marketCard.innerHTML = `
+                    <h3>${index.name}</h3>
+                    <div class="value">${index.value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+                    <div class="change ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${index.change.toFixed(2)}%</div>
+                `;
+                marketOverview.appendChild(marketCard);
+            });
+            
+            // Populate volatile stocks
+            stocksList.innerHTML = '';
+            volatileStocks.forEach(stock => {
+                const isPositive = stock.change >= 0;
+                const stockItem = document.createElement('div');
+                stockItem.className = 'stock-item';
+                stockItem.innerHTML = `
+                    <div class="stock-info">
+                        <div class="stock-name">
+                            ${stock.name}
+                            <span class="stock-symbol">${stock.symbol} (NSE)</span>
+                        </div>
+                        <div class="stock-price">₹${stock.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+                    </div>
+                    <div class="stock-change ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${stock.change.toFixed(2)}%</div>
+                `;
+                stocksList.appendChild(stockItem);
+            });
+        }
+        
+        // Initialize activity log
+        function initActivityLog() {
+            const activityLog = document.getElementById('activity-log');
+            
+            const logEntries = [
+                { time: '10:45:23', message: 'Bought 120 RELIANCE @ ₹2,538.50' },
+                { time: '11:02:47', message: 'Sold 80 TCS @ ₹3,425.75' },
+                { time: '11:30:12', message: 'Bought 200 ICICIBANK @ ₹908.20' },
+                { time: '12:15:38', message: 'Sold 150 INFY @ ₹1,492.40' },
+                { time: '13:45:19', message: 'Bought 100 HDFCBANK @ ₹1,638.90' }
+            ];
+            
+            logEntries.forEach(entry => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <span class="log-time">${entry.time}</span>
+                    <span class="log-message">${entry.message}</span>
+                `;
+                activityLog.appendChild(logEntry);
+            });
+        }
+        
+        // Initialize trading insights
+        function initTradingInsights() {
+            const insightsElement = document.getElementById('trading-insights');
+            
+            insightsElement.innerHTML = `
+                <p>Based on current market conditions and your risk profile, the algorithm recommends:</p>
+                <ul style="padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                    <li>Increasing exposure to banking stocks (current momentum +2.1%)</li>
+                    <li>Reducing tech stock holdings (sector volatility increasing)</li>
+                    <li>Setting tighter stop-losses for mid-cap positions</li>
+                </ul>
+                <p>Today's volatility index: <strong>18.7</strong> (Moderate)</p>
+            `;
+        }
+        
+        // Start trading button
+        startTradingBtn.addEventListener('click', function() {
+            const budget = document.getElementById('budget').value;
+            const risk = document.getElementById('risk').value;
+            
+            // Add activity log entry
+            const log = document.getElementById('activity-log');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">${timeStr}</span>
+                <span class="log-message">Algorithm started with ₹${Number(budget).toLocaleString('en-IN')} budget (${risk} risk profile)</span>
+            `;
+            
+            log.prepend(logEntry);
+            
+            // Keep only 5 most recent logs
+            while (log.children.length > 5) {
+                log.removeChild(log.lastChild);
+            }
+            
+            // Show confirmation
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i> Algorithm Started';
+            this.style.background = 'var(--success)';
+            
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.style.background = '';
+            }, 3000);
+            
+            // Update algorithm status
+            document.getElementById('algo-status-text').textContent = 'Active';
+            document.getElementById('algo-status-indicator').className = 'indicator active';
+        });
+        
+        // Initialize WebSocket for real-time updates
+        function initWebSocket() {
+            // In a real application, this would connect to your backend WebSocket server
+            console.log("Connecting to real-time data feed...");
+            
+            // Simulate real-time updates
+            setInterval(updateStockPrices, 5000);
+        }
+        
+        // Simulate real-time data updates
+        function updateStockPrices() {
+            const niftyIndex = document.getElementById('nifty-index');
+            const niftyChange = document.getElementById('nifty-change');
+            const sensexIndex = document.getElementById('sensex-index');
+            const sensexChange = document.getElementById('sensex-change');
+            
+            // Update indices
+            const niftyChangeValue = (Math.random() * 0.5) - 0.25;
+            const sensexChangeValue = (Math.random() * 0.5) - 0.25;
+            
+            niftyChange.textContent = (niftyChangeValue >= 0 ? '+' : '') + niftyChangeValue.toFixed(2) + '%';
+            niftyChange.className = niftyChangeValue >= 0 ? 'positive' : 'negative';
+            
+            sensexChange.textContent = (sensexChangeValue >= 0 ? '+' : '') + sensexChangeValue.toFixed(2) + '%';
+            sensexChange.className = sensexChangeValue >= 0 ? 'positive' : 'negative';
+            
+            // Update stock prices
+            const stockPrices = document.querySelectorAll('.stock-price');
+            const stockChanges = document.querySelectorAll('.stock-change');
+            
+            stockPrices.forEach(price => {
+                const currentPrice = parseFloat(price.textContent.replace('₹', '').replace(',', ''));
+                const fluctuation = (Math.random() * 10) - 5;
+                const newPrice = currentPrice + fluctuation;
+                
+                price.textContent = '₹' + newPrice.toLocaleString('en-IN', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                });
+            });
+            
+            stockChanges.forEach(change => {
+                const currentChange = parseFloat(change.textContent.replace(/[+-%]/g, ''));
+                const fluctuation = (Math.random() * 0.5) - 0.25;
+                const newChange = currentChange + fluctuation;
+                
+                change.textContent = (newChange >= 0 ? '+' : '') + newChange.toFixed(2) + '%';
+                change.className = 'stock-change ' + (newChange >= 0 ? 'positive' : 'negative');
+            });
+            
+            // Update portfolio values
+            const totalValue = document.getElementById('total-value');
+            const dailyGain = document.getElementById('daily-gain');
+            const overallReturn = document.getElementById('overall-return');
+            
+            const currentValue = parseFloat(totalValue.textContent.replace('₹', '').replace(',', ''));
+            const gain = Math.random() * 10000 - 5000;
+            const newValue = currentValue + gain;
+            
+            totalValue.textContent = '₹' + newValue.toLocaleString('en-IN');
+            dailyGain.textContent = (gain >= 0 ? '+₹' : '-₹') + Math.abs(gain).toLocaleString('en-IN');
+            dailyGain.className = 'value ' + (gain >= 0 ? 'positive' : 'negative');
+            
+            // Randomly add activity logs
+            if (Math.random() > 0.7) {
+                const log = document.getElementById('activity-log');
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                const actions = ['Bought', 'Sold'];
+                const stocks = [
+                    { name: 'RELIANCE', price: 2540 + Math.random() * 20 },
+                    { name: 'TCS', price: 3400 + Math.random() * 50 },
+                    { name: 'HDFCBANK', price: 1630 + Math.random() * 30 },
+                    { name: 'INFY', price: 1480 + Math.random() * 20 },
+                    { name: 'ICICIBANK', price: 910 + Math.random() * 15 }
+                ];
+                
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                const stock = stocks[Math.floor(Math.random() * stocks.length)];
+                const quantity = Math.floor(Math.random() * 200) + 50;
+                
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <span class="log-time">${timeStr}</span>
+                    <span class="log-message">${action} ${quantity} ${stock.name} @ ₹${stock.price.toFixed(2)}</span>
+                `;
+                
+                log.prepend(logEntry);
+                
+                // Keep only 5 most recent logs
+                while (log.children.length > 5) {
+                    log.removeChild(log.lastChild);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
